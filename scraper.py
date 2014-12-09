@@ -61,9 +61,13 @@ def get_general_info(data_dir, user_id_list, file_name):
         d['_status'] = 0
         if d['_description'] is not None:
             d['_description'] = d['_description'].replace("\"", "").replace("\'", "")
-        d['_ratio'] = float(int(d['_friends_count']))/float(int(d['_followers_count']))
+        if d['_followers_count'] is not 0:
+            d['_ratio'] = float(int(d['_friends_count']))/float(int(d['_followers_count']))
+        else:
+            d['_ratio'] = -1.0
         print json.dumps(d)
 
+    sys.stdout = sys.__stdout__
 
 def retrieve_users(l):
     return [l[i:i + 100] for i in range(0, len(l), 100)]
@@ -100,8 +104,8 @@ def post_processing(files, out_file):
 
     num_located = 0.0
     for unique in uniques:
-        print "User: " + unique["_screen_name"] + "\n"
-        print "Ratio: " + unique["_ratio"] + "\n"
+        print "User: " + str(unique["_screen_name"])
+        print "Ratio: " + str(unique["_ratio"])
         if len(unique['_location']) > 2:
             num_located += 1.0
 
@@ -112,6 +116,6 @@ def post_processing(files, out_file):
 
 
 
-# get_all()
+get_all()
 post_processing(followerFilesInfo, "data/unique_results")
 
