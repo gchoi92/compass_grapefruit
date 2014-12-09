@@ -71,5 +71,19 @@ def get_all():
         for l in list_list:
             get_general_info('data', l, f + '_info')
 
-get_times()
+def post_processing(data_dir):
+
+
+
+def get_overlaps(files):
+    uniques = {}
+    for fi in files:
+        with open(fi, "r") as f:
+            entries = f.readlines()
+            for entry in entries:
+                loaded = json.load(entry)
+                if uniques[loaded['_id']] is None:
+                    uniques[loaded['_id']] = "penis"
+
+    print len(uniques)
 
