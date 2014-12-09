@@ -29,30 +29,11 @@ def get_times():
         for u in users:
             d = u.__dict__
             t = datetime.datetime.strptime(d['_created_at'][11:19],"%H:%M:%S")
-            print t
             time_list.append(t)
 
     plt.plot(time_list)
+    plt.title('Users Registered vs. Time on Wed Oct 16')
     plt.show()
-
-# def get_bfs(startingNode=1259788333):
-#     # start from me = 1259788333
-#     visitedNodes = set()
-#     node_count = 0
-#     queue = deque([startingNode])
-#     while len(queue) > 0:
-#        node = queue.pop()
-#        if node in visitedNodes:
-#           continue
-#        visitedNodes.add(node)
-#        if node_count >= 100:
-#           return list(visitedNodes)
-#        for n in getAdjacentNodes(node):
-#           if n not in visitedNodes:
-#              node_count += 1
- 
-#         queue.appendleft(n)
-#     return False
 
 def getAdjacentNodes(node):
     friends = api.GetFriends(user_id=node)
@@ -90,4 +71,5 @@ def get_all():
         for l in list_list:
             get_general_info('data', l, f + '_info')
 
-get_all()
+get_times()
+
