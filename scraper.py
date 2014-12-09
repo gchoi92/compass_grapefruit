@@ -59,6 +59,8 @@ def get_general_info(data_dir, user_id_list, file_name):
         
         sys.stdout = open(path, 'a')
         d['_status'] = 0
+        if d['_description'] is not None:
+            d['_description'] = d['_description'].replace("\"", "").replace("\'", "")
         print json.dumps(d)
 
 
@@ -82,13 +84,12 @@ def get_overlaps(files):
             entries = f.readlines()
             for entry in entries:
                 entry = entry[:-1]
-                json_acceptable_string = entry.replace("'", "\"")
-                # json_acceptable_string = "'" + json_acceptable_string + "'"
-                print json_acceptable_string
+                json_acceptable_string = entry
                 loaded = json.loads(json_acceptable_string)
                 if loaded['_id'] not in uniques:
                     uniques[loaded['_id']] = "0"
 
     print len(uniques)
 
+# get_all()
 get_overlaps(followerFilesInfo)
