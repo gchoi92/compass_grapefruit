@@ -19,6 +19,8 @@ screen_names3 = ['nihaporobys','wyjaborygoga','sivycypycas','mykufuqaqur','faqyh
 
 names = [screen_names1, screen_names2, screen_names3]
 
+followerFiles = ['naravosubumFollowers', 'pokesimecicFollowers', 'vigeguvyjanFollowers']
+
 def get_times():
     time_list = []
 
@@ -63,23 +65,29 @@ def getAdjacentNodes(node):
 
 
 
-def get_general_info(data_dir, user_id_list):
+def get_general_info(data_dir, user_id_list, file_name):
     results = api.UsersLookup(user_id_list)
 
 
     for user in results:
         d = user.__dict__
         name = d['_screen_name']
-        path = data_dir + "/" + name
+        path = data_dir + "/" + file_name
         
-        sys.stdout = open(path, 'w+')
+        sys.stdout = open(path, 'a')
         print d
 
 
 def retrieve_users(l):
-    return [l[i:i + 100] for i in range(0, len(l), n)]
+    return [l[i:i + 100] for i in range(0, len(l), 100)]
 
+def get_all():
+    for f in followerFiles:
+        json_data=open('data/' + f)
+        data = json.load(json_data)
+        ids = data["ids"]
+        list_list = retrieve_users(ids)
+        for l in list_list:
+            get_general_info('data', l, f + '_info')
 
-# fol = api.GetFriends(user_id=1259788333)
-# for f in fol:
-#     print f.__dict__
+get_all()
