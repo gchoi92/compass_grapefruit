@@ -61,6 +61,7 @@ def get_general_info(data_dir, user_id_list, file_name):
         d['_status'] = 0
         if d['_description'] is not None:
             d['_description'] = d['_description'].replace("\"", "").replace("\'", "")
+        d['_ratio'] = float(int(d['_friends_count']))/float(int(d['_followers_count']))
         print json.dumps(d)
 
 
@@ -93,17 +94,24 @@ def get_uniques(files):
 
     return uniques
 
-def get_percent_located(files):
+def post_processing(files, out_file):
     uniques = get_uniques(files)
     print "Unique accounts: " + str(len(uniques))
 
     num_located = 0.0
     for unique in uniques:
+        print "User: " + unique["_screen_name"] + "\n"
+        print "Ratio: " + unique["_ratio"] + "\n"
         if len(unique['_location']) > 2:
             num_located += 1.0
 
     print "Percent located is: " + str(num_located/float(len(uniques)))
 
+    with open(out_file, "w+") as f:
+        json.dump(uniques, f)
+
+
 
 # get_all()
-get_percent_located(followerFilesInfo)
+post_processing(followerFilesInfo, "data/unique_results")
+
