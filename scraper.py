@@ -78,7 +78,8 @@ def get_all():
 
 
 def get_uniques(files):
-    uniques = {}
+    keys = {}
+    uniques = []
     for fi in files:
         with open('data/' + fi, "r") as f:
             entries = f.readlines()
@@ -86,18 +87,19 @@ def get_uniques(files):
                 entry = entry[:-1]
                 json_acceptable_string = entry
                 loaded = json.loads(json_acceptable_string)
-                if loaded['_id'] not in uniques:
-                    uniques[loaded['_id']] = "0"
+                if loaded['_id'] not in keys:
+                    keys[loaded['_id']] = 0
+                    uniques.append(loaded)
 
     return uniques
 
 def get_percent_located(files):
     uniques = get_uniques(files)
-    print len(uniques)
+    print "Unique accounts: " + str(len(uniques))
 
     num_located = 0.0
     for unique in uniques:
-        if unique[''] is not None:
+        if len(unique['_location']) > 2:
             num_located += 1.0
 
     print "Percent located is: " + str(num_located/float(len(uniques)))
