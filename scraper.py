@@ -46,7 +46,8 @@ def get_bfs(startingNode=1259788333):
        for n in getAdjacentNodes(node):
           if n not in visitedNodes:
              node_count += 1
-             queue.appendleft(n)
+ 
+            queue.appendleft(n)
     return False
 
 def getAdjacentNodes(node):
@@ -57,6 +58,25 @@ def getAdjacentNodes(node):
         lst.append(f.__dict__['_id'])
     print lst
     return lst
+
+
+
+def get_general_info(data_dir, user_id_list):
+    results = api.UsersLookup(user_id_list)
+
+
+    for user in results:
+        name = user.#
+        path = data_dir + "/" + name
+        
+        with open(path, 'w+') as f:
+            f.write()
+
+
+
+def retrieve_users(l):
+    return [l[i:i + 100] for i in range(0, len(l), n)]
+
 
 fol = api.GetFriends(user_id=1259788333)
 for f in fol:
