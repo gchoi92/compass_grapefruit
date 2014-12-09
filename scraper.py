@@ -77,7 +77,7 @@ def get_all():
             get_general_info('data', l, f + '_info')
 
 
-def get_overlaps(files):
+def get_uniques(files):
     uniques = {}
     for fi in files:
         with open('data/' + fi, "r") as f:
@@ -89,7 +89,19 @@ def get_overlaps(files):
                 if loaded['_id'] not in uniques:
                     uniques[loaded['_id']] = "0"
 
+    return uniques
+
+def get_percent_located(files):
+    uniques = get_uniques(files)
     print len(uniques)
 
+    num_located = 0.0
+    for unique in uniques:
+        if unique[''] is not None:
+            num_located += 1.0
+
+    print "Percent located is: " + str(num_located/float(len(uniques)))
+
+
 # get_all()
-get_overlaps(followerFilesInfo)
+get_percent_located(followerFilesInfo)
