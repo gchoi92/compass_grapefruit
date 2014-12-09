@@ -2,6 +2,7 @@ import twitter
 import time
 import datetime
 import json
+import ast
 import sys
 import matplotlib.pyplot as plt
 from collections import deque
@@ -20,6 +21,7 @@ screen_names3 = ['nihaporobys','wyjaborygoga','sivycypycas','mykufuqaqur','faqyh
 names = [screen_names1, screen_names2, screen_names3]
 
 followerFiles = ['naravosubumFollowers', 'pokesimecicFollowers', 'vigeguvyjanFollowers']
+followerFilesInfo = ['naravosubumFollowers_info', 'pokesimecicFollowers_info', 'vigeguvyjanFollowers_info']
 
 def get_times():
     time_list = []
@@ -56,7 +58,8 @@ def get_general_info(data_dir, user_id_list, file_name):
         path = data_dir + "/" + file_name
         
         sys.stdout = open(path, 'a')
-        print d
+        d['_status'] = 0
+        print json.dumps(d)
 
 
 def retrieve_users(l):
@@ -71,19 +74,21 @@ def get_all():
         for l in list_list:
             get_general_info('data', l, f + '_info')
 
-def post_processing(data_dir):
-
-
 
 def get_overlaps(files):
     uniques = {}
     for fi in files:
-        with open(fi, "r") as f:
+        with open('data/' + fi, "r") as f:
             entries = f.readlines()
             for entry in entries:
-                loaded = json.load(entry)
-                if uniques[loaded['_id']] is None:
-                    uniques[loaded['_id']] = "penis"
+                entry = entry[:-1]
+                json_acceptable_string = entry.replace("'", "\"")
+                # json_acceptable_string = "'" + json_acceptable_string + "'"
+                print json_acceptable_string
+                loaded = json.loads(json_acceptable_string)
+                if loaded['_id'] not in uniques:
+                    uniques[loaded['_id']] = "0"
 
     print len(uniques)
 
+get_overlaps(followerFilesInfo)
