@@ -1,8 +1,10 @@
 import twitter
 import time
 import datetime
-from collections import deque
+import json
+import sys
 import matplotlib.pyplot as plt
+from collections import deque
 api = twitter.Api(consumer_key='6GhjLPbZahCKk4gpLtFCa0XSh',
                       consumer_secret='Q1rPti2CMnEH555ZSUjTymg5KP1RAzi0PpKjjp0tXYNS27IP2K',
                       access_token_key='1259788333-dmMU7hlLFvT8z1dQDKKbjUHn3x4EQMo5QkY4tEY',
@@ -31,24 +33,24 @@ def get_times():
     plt.plot(time_list)
     plt.show()
 
-def get_bfs(startingNode=1259788333):
-    # start from me = 1259788333
-    visitedNodes = set()
-    node_count = 0
-    queue = deque([startingNode])
-    while len(queue) > 0:
-       node = queue.pop()
-       if node in visitedNodes:
-          continue
-       visitedNodes.add(node)
-       if node_count >= 100:
-          return list(visitedNodes)
-       for n in getAdjacentNodes(node):
-          if n not in visitedNodes:
-             node_count += 1
+# def get_bfs(startingNode=1259788333):
+#     # start from me = 1259788333
+#     visitedNodes = set()
+#     node_count = 0
+#     queue = deque([startingNode])
+#     while len(queue) > 0:
+#        node = queue.pop()
+#        if node in visitedNodes:
+#           continue
+#        visitedNodes.add(node)
+#        if node_count >= 100:
+#           return list(visitedNodes)
+#        for n in getAdjacentNodes(node):
+#           if n not in visitedNodes:
+#              node_count += 1
  
-            queue.appendleft(n)
-    return False
+#         queue.appendleft(n)
+#     return False
 
 def getAdjacentNodes(node):
     friends = api.GetFriends(user_id=node)
@@ -66,18 +68,18 @@ def get_general_info(data_dir, user_id_list):
 
 
     for user in results:
-        name = user.#
+        d = user.__dict__
+        name = d['_screen_name']
         path = data_dir + "/" + name
         
-        with open(path, 'w+') as f:
-            f.write()
-
+        sys.stdout = open(path, 'w+')
+        print d
 
 
 def retrieve_users(l):
     return [l[i:i + 100] for i in range(0, len(l), n)]
 
 
-fol = api.GetFriends(user_id=1259788333)
-for f in fol:
-    print f.__dict__
+# fol = api.GetFriends(user_id=1259788333)
+# for f in fol:
+#     print f.__dict__
