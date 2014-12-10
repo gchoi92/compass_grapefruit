@@ -2,9 +2,11 @@ import twitter
 import time
 import datetime
 import json
+import numpy
 import ast
 import sys
 import matplotlib.pyplot as plt
+from scipy.stats import cumfreq
 from collections import deque
 api = twitter.Api(consumer_key='6GhjLPbZahCKk4gpLtFCa0XSh',
                       consumer_secret='Q1rPti2CMnEH555ZSUjTymg5KP1RAzi0PpKjjp0tXYNS27IP2K',
@@ -114,8 +116,45 @@ def post_processing(files, out_file):
     with open(out_file, "w+") as f:
         json.dump(uniques, f)
 
+def get_friends_followers_plot(files):
+    uniques = get_uniques(files)
+    friends = []
+    followers = []
+    for u in uniques:
+        friends.append(u['_friends_count'])
+        followers.append(u['_followers_count'])
+
+    print "Averages = ",
+    print sum(friends) / float(len(friends)), sum(followers) / float(len(followers))
+    sorted_list = sorted(zip(friends, followers))
+
+    plt.title('Friends (green) vs. followers (red)')
+    plt.plot([x for y,x in sorted_list], 'r--', [y for y,x in sorted_list], 'g--')
+    plt.show()
+
+def get_status_graph(files):
+    uniques = get_uniques(files)
+    statuses = []
+    for u in uniques:
+        statuses.append(u['_statuses_count'])
+
+    sorted_list = sorted(statuses)
+    print "Average = ",
+    print sum(statuses) / float(len(statuses))
+    print "Median = ",
+    print numpy.median(numpy.array(statuses))
+
+    # plt.title('Statuses count')
+    # plt.plot(sorted_list[:-1], 'r^')
+    # plt.show()
+    num_bins =  50
+    b = cumfreq(statuses, num_bins)
+    plt.plot(b)
 
 
-get_all()
-post_processing(followerFilesInfo, "data/unique_results")
+# get_all()
+# post_processing(followerFilesInfo, "data/unique_results")
+
+# get_friends_followers_plot(followerFilesInfo)
+get_status_graph(followerFilesInfo)
 
