@@ -6,7 +6,6 @@ import numpy
 import ast
 import sys
 import matplotlib.pyplot as plt
-from scipy.stats import cumfreq
 from collections import deque
 api = twitter.Api(consumer_key='6GhjLPbZahCKk4gpLtFCa0XSh',
                       consumer_secret='Q1rPti2CMnEH555ZSUjTymg5KP1RAzi0PpKjjp0tXYNS27IP2K',
@@ -105,13 +104,26 @@ def post_processing(files, out_file):
     print "Unique accounts: " + str(len(uniques))
 
     num_located = 0.0
+    num_time = 0.0
+    default_pics = 0.0
+    url_count = 0.0
     for unique in uniques:
-        print "User: " + str(unique["_screen_name"])
-        print "Ratio: " + str(unique["_ratio"])
+
         if len(unique['_location']) > 2:
             num_located += 1.0
+        if unique['_time_zone'] is not None and len(unique['_time_zone']) > 2:
+            num_time += 1.0
+        if "default_profile_images" in unique['_profile_image_url']:
+            default_pics += 1.0
+        if unique['_url'] is not None and len (unique['_url']) > 2:
+            url_count += 1.0
 
     print "Percent located is: " + str(num_located/float(len(uniques)))
+    print "Percent time is: " + str(num_time/float(len(uniques)))
+    print "Percent default pics is: " + str(default_pics/float(len(uniques)))
+    print "Percent urls is: " + str(url_count/float(len(uniques)))
+
+
 
     with open(out_file, "w+") as f:
         json.dump(uniques, f)
@@ -147,14 +159,17 @@ def get_status_graph(files):
     # plt.title('Statuses count')
     # plt.plot(sorted_list[:-1], 'r^')
     # plt.show()
-    num_bins =  50
-    b = cumfreq(statuses, num_bins)
-    plt.plot(b)
+    so=numpy.sort( statuses )
+    yvals=numpy.arange(len(so))/float(len(so))
+    plt.plot( so, yvals )
+    plt.title("CDF of status count")
+    plt.show()
+
 
 
 # get_all()
-# post_processing(followerFilesInfo, "data/unique_results")
+post_processing(followerFilesInfo, "data/unique_results")
 
 # get_friends_followers_plot(followerFilesInfo)
-get_status_graph(followerFilesInfo)
+# get_status_graph(followerFilesInfo)
 
