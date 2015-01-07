@@ -159,16 +159,16 @@ def get_status_graph(files):
     # plt.title('Statuses count')
     # plt.plot(sorted_list[:-1], 'r^')
     # plt.show()
-    so=numpy.sort( statuses )
-    yvals=numpy.arange(len(so))/float(len(so))
-    plt.plot( so, yvals )
-    plt.title("CDF of status count")
-    plt.show()
+    # so=numpy.sort( statuses )
+    # yvals=numpy.arange(len(so))/float(len(so))
+    # plt.plot( so, yvals )
+    # plt.title("CDF of status count")
+    # plt.show()
 
 
 
 # get_all()
-post_processing(followerFilesInfo, "data/unique_results")
+# post_processing(followerFilesInfo, "data/unique_results")
 
 # get_friends_followers_plot(followerFilesInfo)
 # get_status_graph(followerFilesInfo)
