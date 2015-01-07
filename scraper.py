@@ -5,7 +5,7 @@ import json
 import numpy
 import ast
 import sys
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 from collections import deque
 api = twitter.Api(consumer_key='6GhjLPbZahCKk4gpLtFCa0XSh',
                       consumer_secret='Q1rPti2CMnEH555ZSUjTymg5KP1RAzi0PpKjjp0tXYNS27IP2K',
@@ -21,8 +21,10 @@ screen_names3 = ['nihaporobys','wyjaborygoga','sivycypycas','mykufuqaqur','faqyh
 
 names = [screen_names1, screen_names2, screen_names3]
 
-followerFiles = ['naravosubumFollowers', 'pokesimecicFollowers', 'vigeguvyjanFollowers']
-followerFilesInfo = ['naravosubumFollowers_info', 'pokesimecicFollowers_info', 'vigeguvyjanFollowers_info']
+followerFilesBad = ['naravosubumFollowers', 'pokesimecicFollowers', 'vigeguvyjanFollowers']
+followerFilesInfoBad = ['naravosubumFollowers_info', 'pokesimecicFollowers_info', 'vigeguvyjanFollowers_info']
+followerFilesGood = ['appNexusFollowers']
+followerFilesInfoGood = ['appNexusFollowers_info']
 
 def get_times():
     time_list = []
@@ -57,7 +59,7 @@ def get_general_info(data_dir, user_id_list, file_name):
         d = user.__dict__
         name = d['_screen_name']
         path = data_dir + "/" + file_name
-        
+
         sys.stdout = open(path, 'a')
         d['_status'] = 0
         if d['_description'] is not None:
@@ -165,11 +167,40 @@ def get_status_graph(files):
     # plt.title("CDF of status count")
     # plt.show()
 
+def do_learning(filesBad, filesGood):
+    from sklearn import svm
 
+    uniques = get_uniques(filesBad)
+    total_arr = []
+    iden = []
+    bad_last = []
+    for u in uniques:
+        loc = 0
+        if len(u['_location']) > 2:
+            loc = 1
+        temp = [loc, u['_statuses_count'], u['_ratio'], u['_followers_count'], u['_friends_count'], u['_favourites_count'], int(u['_geo_enabled']), int(u['_contributors_enabled']), int(u['_verified'])]
+        total_arr.append(temp)
+        iden.append(0)
+        bad_last = temp
 
-# get_all()
+    uniques = get_uniques(filesGood)
+    for u in uniques:
+        loc = 0
+        if len(u['_location']) > 2:
+            loc = 1
+        temp = [loc, u['_statuses_count'], u['_ratio'], u['_followers_count'], u['_friends_count'], u['_favourites_count'], int(u['_geo_enabled']), int(u['_contributors_enabled']), int(u['_verified'])]
+        total_arr.append(temp)
+        iden.append(1)
+
+    clf = svm.SVC()
+    clf.fit(total_arr, iden)
+
+    print clf.predict([[0, 1876, 76.0/16.0, 76, 16, 4, 0, 0, 0]])[0], clf.predict([bad_last])[0]
+
+#get_all()
 # post_processing(followerFilesInfo, "data/unique_results")
 
 # get_friends_followers_plot(followerFilesInfo)
 # get_status_graph(followerFilesInfo)
 
+do_learning(followerFilesInfoBad, followerFilesInfoGood)
