@@ -173,7 +173,13 @@ def do_learning(filesBad, filesGood):
     total_arr = []
     iden = []
     bad_last = []
-    for u in uniques:
+
+
+    split = split_data(followerFilesInfoBad, followerFilesInfoGood)
+    print len(split[0]), len(split[1]), len(split[2]), len(split[3])
+
+
+    for u in split[0]:
         loc = 0
         if len(u['_location']) > 2:
             loc = 1
@@ -182,8 +188,7 @@ def do_learning(filesBad, filesGood):
         iden.append(0)
         bad_last = temp
 
-    uniques = get_uniques(filesGood)
-    for u in uniques:
+    for u in split[2]:
         loc = 0
         if len(u['_location']) > 2:
             loc = 1
@@ -194,10 +199,37 @@ def do_learning(filesBad, filesGood):
     clf = svm.SVC()
     clf.fit(total_arr, iden)
 
-    total = split_data(followerFilesInfoBad, followerFilesInfoGood)
+    total_test = len(split[1]) + len(split[3])
+    num_bad_correct = 0
+    num_good_correct = 0
+
+    for u in split[1]:
+        if len(u['_location']) > 2:
+            loc = 1
+        temp = [loc, u['_statuses_count'], u['_ratio'], u['_followers_count'], u['_friends_count'], u['_favourites_count'], int(u['_geo_enabled']), int(u['_contributors_enabled']), int(u['_verified'])]
+        result = clf.predict([temp])[0]
+        if result == 0:
+            num_bad_correct += 1
+
+    for u in split[3]:
+        if len(u['_location']) > 2:
+            loc = 1
+        temp = [loc, u['_statuses_count'], u['_ratio'], u['_followers_count'], u['_friends_count'], u['_favourites_count'], int(u['_geo_enabled']), int(u['_contributors_enabled']), int(u['_verified'])]
+        result = clf.predict([temp])[0]
+        if result == 1:
+            num_good_correct += 1
 
 
-    print clf.predict([[0, 1876, 76.0/16.0, 76, 16, 4, 0, 0, 0]])[0], clf.predict([bad_last])[0]
+    total_correct = num_bad_correct + num_good_correct
+
+    print "total: " + str(total_test)
+    print "num_bad_correct: " + str(num_bad_correct)
+    print "num_good_correct: " + str(num_good_correct)
+
+
+    print "bad accuracy: " + str(float(num_bad_correct)/float(len(split[1])))
+    print "good accuracy: " + str(float(num_good_correct)/float(len(split[3])))    
+    print "total accuracy: " + str(float(total_correct)/float(total_test))
 
 
 '''
@@ -236,4 +268,4 @@ def split_data(filesBad, filesGood):
 
 
 #split_data(followerFilesInfoBad)
-#do_learning(followerFilesInfoBad, followerFilesInfoGood)
+do_learning(followerFilesInfoBad, followerFilesInfoGood)
