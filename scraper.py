@@ -194,31 +194,39 @@ def do_learning(filesBad, filesGood):
     clf = svm.SVC()
     clf.fit(total_arr, iden)
 
+    total = split_data(followerFilesInfoBad, followerFilesInfoGood)
+
+
     print clf.predict([[0, 1876, 76.0/16.0, 76, 16, 4, 0, 0, 0]])[0], clf.predict([bad_last])[0]
 
 
 '''
-randomly split training/test data at 9-1 ratio. 
+randomly split training/test data at 9-1 ratio.
 save to good_train, good_test, bad_train, bad_test
 '''
 def split_data(filesBad, filesGood):
     import random
     bad_uniques = get_uniques(filesBad)
-    total = len(bad_uniques)
+    limit = len(bad_uniques) / 10
 
-    train = bad_uniques
-    test = {}
-    for x in range(total/10):
-        test_id = random.choice(test.keys())
-        test_entry = test.pop(test_id)
-        test[test_id] = test_entry
+    train = []
+    test = []
+    random.shuffle(bad_uniques)
 
-    with open("data/bad_train") as bad_train:
-        json.dump(train, bad_train)
+    test = bad_uniques[:limit]
+    train = bad_uniques[limit:]
 
-    with open("data/bad_test") as bad_test:
-        json.dump(train, bad_test)
+    good_uniques = get_uniques(filesGood)
+    limit = len(good_uniques) / 10
 
+    train2 = []
+    test2 = []
+    random.shuffle(good_uniques)
+
+    test2 = good_uniques[:limit]
+    train2 = good_uniques[limit:]
+
+    return [train, test, train2, test2]
 #get_all()
 # post_processing(followerFilesInfo, "data/unique_results")
 
@@ -227,5 +235,5 @@ def split_data(filesBad, filesGood):
 
 
 
-split_data(followerFilesInfoBad)
+#split_data(followerFilesInfoBad)
 #do_learning(followerFilesInfoBad, followerFilesInfoGood)
