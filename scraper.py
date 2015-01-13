@@ -54,7 +54,6 @@ def getAdjacentNodes(node):
 def get_general_info(data_dir, user_id_list, file_name):
     results = api.UsersLookup(user_id_list)
 
-
     for user in results:
         d = user.__dict__
         name = d['_screen_name']
@@ -197,10 +196,36 @@ def do_learning(filesBad, filesGood):
 
     print clf.predict([[0, 1876, 76.0/16.0, 76, 16, 4, 0, 0, 0]])[0], clf.predict([bad_last])[0]
 
+
+'''
+randomly split training/test data at 9-1 ratio. 
+save to good_train, good_test, bad_train, bad_test
+'''
+def split_data(filesBad, filesGood):
+    import random
+    bad_uniques = get_uniques(filesBad)
+    total = len(bad_uniques)
+
+    train = bad_uniques
+    test = {}
+    for x in range(total/10):
+        test_id = random.choice(test.keys())
+        test_entry = test.pop(test_id)
+        test[test_id] = test_entry
+
+    with open("data/bad_train") as bad_train:
+        json.dump(train, bad_train)
+
+    with open("data/bad_test") as bad_test:
+        json.dump(train, bad_test)
+
 #get_all()
 # post_processing(followerFilesInfo, "data/unique_results")
 
 # get_friends_followers_plot(followerFilesInfo)
 # get_status_graph(followerFilesInfo)
 
-do_learning(followerFilesInfoBad, followerFilesInfoGood)
+
+
+split_data(followerFilesInfoBad)
+#do_learning(followerFilesInfoBad, followerFilesInfoGood)
